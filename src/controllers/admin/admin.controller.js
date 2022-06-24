@@ -27,7 +27,8 @@ exports.getAllUsers = (req, res, next) => {
 
 exports.registerAdmin = (req, res, next) => {
     // Check authorization first
-    checkAuthorization(req, res, 'Admin');
+    let v = checkAuthorization(req, res, 'Admin');
+    if (v != null) return v;
 
     req.body.created_by = req.user.user_id;
     req.body.verified_by = req.user.user_id;
@@ -52,7 +53,8 @@ exports.registerAdmin = (req, res, next) => {
 // % ROUTE: /ebasa/v1/admin/add-account-librarian
 exports.registerLibrarian = (req, res, next) => {
     // Check authorization first
-    checkAuthorization(req, res, 'Admin');
+    let v = checkAuthorization(req, res, 'Admin');
+    if (v != null) return v;
 
     req.body.created_by = req.user.user_id;
     req.body.verified_by = req.user.user_id;

@@ -1,0 +1,17 @@
+# EBASA API Project Changelog
+
+## 0.1.0
+- Project Initialization
+- 30% of the project done. Established to have a login part of the system.
+- Admin features are implemented here.
+
+## 0.2.0
+- Image Upload is implemented here for all possible users (Admin, Librarian, and Resident)
+- Librarian Big Update: All Table routes are implemented (Author, Language, Genre, Publisher, Shelves)
+- Visiting Log is implemented (no code for creating in this update)
+- 70% of the project done.
+- Things to complete for at most 90% completion:
+  - Add, Update, Active/Inactive Book Table
+  - Borrow Transaction (Resident Side Only)
+  - Return Transaction (Librarian Side Only)
+  - Search Book Function for Authorize/Unauthorize users.

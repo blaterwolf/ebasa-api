@@ -175,7 +175,11 @@ module.exports = (sequelize, DataTypes) => {
                 comment: 'Current number of books available. Example values are: 5, 10...'
             },
 
-            // ! BOOK IMAGE PA.
+            book_image: {
+                type: DataTypes.STRING,
+                allowNull: true,
+                comment: 'This contains the book_image of the user.'
+            },
 
             // >> WITH FOREIGN KEYS
 

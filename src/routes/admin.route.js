@@ -6,11 +6,12 @@ var router = require('express').Router();
  * =====================================================================
  */
 
-// >> TODO ROUTES
+// >> MIDDLEWARE
+const { profilePicUpload } = require('../helper/imageMiddleware');
 
 // % Admin Powers Management
 var adminPowersController = require('../controllers/admin/admin.controller');
-router.get('/users'                         , adminPowersController.getAllUsers);
+router.get('/users'                   , adminPowersController.getAllUsers);
 router.post('/add-account-admin'      , adminPowersController.registerAdmin);
 router.post('/add-account-librarian'  , adminPowersController.registerLibrarian);
 
@@ -20,6 +21,7 @@ var infoController = require('../controllers/admin/info.controller');
 router.get('/info'                  , infoController.getInfo);
 router.put('/info'                  , infoController.updateInfo);
 router.put('/info/change-password'  , infoController.changePassword);
+router.put('/info/change-profile-pic' , profilePicUpload, infoController.changeProfilePic);
 
 // % User Management Controller
 var userController = require('../controllers/admin/users.controller');

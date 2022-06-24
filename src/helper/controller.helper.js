@@ -35,6 +35,8 @@ exports.checkAuthorization = (req, res, userType) => {
     
     // Check if user is not authorized
     if(!(req.user != null && req.user.user_type === userType)) return res.status(401).send('Oops! You are unauthorized to view your request');
+
+    return null;
 }
 
 

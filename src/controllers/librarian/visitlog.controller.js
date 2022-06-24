@@ -2,8 +2,8 @@
  * ========================================================================
  * * VISITING LOG CONTROLLER
  * ------------------------------------------------------------------------
- * This controller is for visiting log activity of resident. The resident
- * can be able to view their own visiting log.
+ * This controller is for visiting log activity of resident. The librarian
+ * can be able to view the visiting log of the residents.
  * ========================================================================
  * 
  */
@@ -17,10 +17,10 @@ exports.createVisitLog = (req, res, next) => {
 }
 
 // % Get all visit logs
-// % ROUTE: /ebasa/v1/resident/visitlog
+// % ROUTE: /ebasa/v1/librarian/visitlog
 exports.getAllVisitLog = (req, res, next) => {
     // Check authorization first
-    let v = checkAuthorization(req, res, 'Resident');
+    let v = checkAuthorization(req, res, 'Librarian');
     if (v != null) return v;
 
     db.Visit_Log
@@ -30,18 +30,18 @@ exports.getAllVisitLog = (req, res, next) => {
 }
 
 // % Get one visit log
-// % ROUTE: /ebasa/v1/resident/visitlog/:user_id
+// % ROUTE: /ebasa/v1/librarian/visitlog/:visit_id
 exports.getOneVisitLog = (req, res, next) => {
     // Check authorization first
-    let v = checkAuthorization(req, res, 'Resident');
+    let v = checkAuthorization(req, res, 'Librarian');
     if (v != null) return v;
 
     db.Visit_Log
-    .findOne({
-        where: {
-            visit_id: req.params.visit_id,
-        }
-    })
-    .then(data => dataResponse(res, data, 'Visit Log record retrieved.', 'No Visit Log record is found.'))
-    .catch(err => errResponse(res, err))
+        .findOne({
+            where: {
+                visit_id: req.params.visit_id,
+            }
+        })
+        .then(data => dataResponse(res, data, 'Visit Log record retrieved.', 'No Visit Log record is found.'))
+        .catch(err => errResponse(res, err))
 }

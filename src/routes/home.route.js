@@ -24,6 +24,7 @@ router.post('/login', loginController.login);
 // Register Controller
 // ! Not yet implemented
 var registerController = require('../controllers/home/register.controller');
+router.post('/check-account', registerController.checkAccount);
 
 // * Export Module to use in ../index.js
 module.exports = router;

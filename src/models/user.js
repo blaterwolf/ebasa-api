@@ -307,7 +307,15 @@ module.exports = (sequelize, DataTypes) => {
                 comment: 'This contains the contact number of the user.'
             },
 
-            // ! PROFILE PIC (image)
+            profile_pic: {
+                type: DataTypes.STRING,
+                allowNull: true,
+                comment: 'This contains the profile picture of the user.',
+                get() {
+                    const rawValue = this.getDataValue('profile_pic');
+                    return rawValue ? "http://localhost:3600/public/" + rawValue : null;
+                }
+            },
 
             verified: {
                 type: DataTypes.BOOLEAN,
@@ -316,7 +324,11 @@ module.exports = (sequelize, DataTypes) => {
                 comment: 'This indicates if the account of a user is verified or not'
             },
 
-            // ! BARANGAY CARD (image)
+            barangay_card: {
+                type: DataTypes.STRING,
+                allowNull: true,
+                comment: 'This contains the barangay card of the user.'
+            },
 
             created_by: {
                 type: DataTypes.UUID,

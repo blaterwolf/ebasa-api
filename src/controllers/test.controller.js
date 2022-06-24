@@ -18,13 +18,13 @@ async function fetchText() {
 exports.test = async (req, res, next) => {
     
     res.send(`
-    ===========================================================
-    TEST BOOP IN POSTMAN.
-    -----------------------------------------------------------
-    This is a successful boop! Here's a T. Swift lyric for you:
-
-    ${await fetchText()}
-    ===========================================================
+    =========================================================== <br/>
+    TEST BOOP IN POSTMAN. <br/>
+    =========================================================== <br/>
+    This is a successful boop! Here's a T. Swift lyric for you: <br/>
+    <br/>
+    ${await fetchText()} <br/>
+    =========================================================== <br/>
     `);
 }
 
@@ -86,21 +86,22 @@ exports.populate_admin = (req, res, next) => {
 
 exports.populate_librarians = (req, res, next) => {
 
-    // ! Alamin yung about sa automatic pag-fill ng full_name.
+    req.body = {
+        user_id: 'b89d075f-6830-4c88-8891-e3407a3813b0',
+        first_name: 'Shane Jean',
+        last_name: 'Razal',
+        password: 'Librarian_111',
+        user_type: 'Librarian',
+        email_address: 'shanerazal@gmail.com',
+        contact_number: '09123456789',
+        verified: true,
+        created_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
+        verified_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
+        status: 'Active'
+    }
+
     db.User
-        .create({
-            user_id: 'b89d075f-6830-4c88-8891-e3407a3813b0',
-            first_name: 'Shane Jean',
-            last_name: 'Razal',
-            password: 'Librarian_111',
-            user_type: 'Librarian',
-            email_address: 'shanerazal@gmail.com',
-            contact_number: '09123456789',
-            verified: true,
-            created_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
-            verified_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
-            status: 'Active'
-        })
+        .create(req.body)
         .then((data) => {
             let s_data = {
                 error: false,
@@ -142,6 +143,63 @@ exports.populate_librarians = (req, res, next) => {
 }
 
 exports.populate_residents = (req, res, next) => {
+    req.body = {
+        user_id: '60e07188-eaa4-42a4-8933-ef368de90c17',
+        first_name: 'Dhensell May',
+        middle_name: 'Sangrio',
+        last_name: 'Boquiren',
+        password: 'Resident_111',
+        user_type: 'Resident',
+        email_address: 'dhensell@gmail.com',
+        contact_number: '09123456789',
+        verified: true,
+        created_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
+        verified_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
+        status: 'Active'
+    }
+
+    req.body.full_name = '';
+
+    db.User
+        .create(req.body)
+        .then((data) => {
+            let s_data = {
+                error: false,
+                data: data,
+            }
+            // >> Success Message!
+            res.send(`
+            ========================================================================
+            Success! A librarian has been populated.
+            ------------------------------------------------------------------------
+            Your request has been sent to the database, here's a song lyric for you:
+            
+            "I'm waiting for it, that greenlight, I want it." - Green Light, Lorde
+            
+            Info:
+            ${JSON.stringify(s_data)}
+            ========================================================================
+            `);
+        })
+        .catch((err) => {
+            let f_data = {
+                error: true,
+                data: [],
+                message: err.errors.map((e) => e.message),
+            }
+            res.status(500).send(`
+            ========================================================================
+            Error! Something happened.
+            ------------------------------------------------------------------------
+            Your request failed, here's a song lyric for you though:
+            
+            "We're reeling through the midnight streets" - Ribs, Lorde
+            
+            Info:
+            ${JSON.stringify(f_data, null, 4)}
+            ========================================================================
+            `)
+        })
 }
 
 exports.user_table = (req, res, next) => {

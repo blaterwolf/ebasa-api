@@ -14,13 +14,26 @@ const bcrypt = require('bcrypt');
 // % ROUTE: /ebasa/v1/admin/info
 exports.getInfo = (req, res, next) => {
     // Check if user logged in or logged in but not Admin
-    checkAuthorization(req, res, 'Admin');
+    let v = checkAuthorization(req, res, 'Admin');
+    if (v != null) return v;
 
     db.User.findOne({
         where: {
             user_id: req.user.user_id,
         },
-        attributes: ['user_id', 'first_name', 'last_name', 'email_address', 'contact_number', 'user_type', 'status'],
+        attributes: ['user_id', 'full_name', 'email_address', 'contact_number', 'profile_pic', 'user_type', 'status'],
+        include: [
+            {
+                model: db.User,
+                attributes: ['user_id', 'full_name','user_type', 'status'],
+                as: 'created_by_admin',
+            },
+            {
+                model: db.User,
+                attributes: ['user_id', 'full_name','user_type', 'status'],
+                as: 'updated_by_admin',
+            }
+        ]
     })
         .then((data) => dataResponse(res, data, 'A Record has been identified', 'No Record has been identified'))
         .catch((err) => errResponse(res, err));
@@ -30,9 +43,11 @@ exports.getInfo = (req, res, next) => {
 // % ROUTE: /ebasa/v1/admin/info
 exports.updateInfo = (req, res, next) => {
     req.body['updated_by'] = req.user.user_id;
-    // Check if user logged in or logged in but not Admin
-    checkAuthorization(req, res, 'Admin');
+    req.body.full_name = '';
 
+    // Check if user logged in or logged in but not Admin
+    let v = checkAuthorization(req, res, 'Admin');
+    if (v != null) return v;
 
     db.User
         .findByPk(req.user.user_id)
@@ -48,9 +63,9 @@ exports.updateInfo = (req, res, next) => {
                     }
                 })
                 .then(() => {
-                    // Get Super Admin info
+                    // Get Admin info
                     db.User
-                        .findByPk(req.user.user_id, {attributes: ['user_id', 'first_name', 'last_name', 'email_address', 'contact_number', 'user_type', 'status', 'updated_by']})
+                        .findByPk(req.user.user_id, {attributes: ['user_id', 'first_name', 'middle_name', 'last_name', 'full_name', 'email_address', 'contact_number', 'user_type', 'status', 'updated_by']})
                         .then((data) => dataResponse(res, data, 'A Record has been successfully updated', 'No changes in the record'))
                         .catch((err) => errResponse(res, err));
                 })
@@ -64,7 +79,8 @@ exports.updateInfo = (req, res, next) => {
 exports.changePassword = (req, res, next) => {
     
     // Check authorization first
-    checkAuthorization(req, res, 'Admin');
+    let v = checkAuthorization(req, res, 'Admin');
+    if (v != null) return v;
 
     // Get password from req.body
     const new_password = bcrypt.hashSync(req.body.new_password, 10) ;
@@ -94,4 +110,37 @@ exports.changePassword = (req, res, next) => {
             }
         })
         .catch(err => errResponse(res, err));
+}
+
+// % Change the profile pic of the currently logged in user.
+// % ROUTE: /ebasa/v1/admin/info/change-profile-pic
+exports.changeProfilePic = (req, res, next) => {
+    console.log(req.file);
+    req.body.profile_pic = req.file != undefined ? req.file.filename : '';
+
+    // Check if user logged in or logged in but not Admin
+    let v = checkAuthorization(req, res, 'Admin');
+    if (v != null) return v;
+
+    db.User
+        .findByPk(req.user.user_id)
+        .then((result) => {
+            // If no result return empty response
+            if(result == null) emptyDataResponse(res, 'No Record has been identified');
+        
+            // Update Information from request body
+            db.User
+                .update(req.body, {
+                    where: { user_id: req.user.user_id }
+                })
+                .then(() => {
+                    // Get Admin info
+                    db.User
+                        .findByPk(req.user.user_id, {attributes: ['user_id', 'full_name', 'status', 'profile_pic']})
+                        .then((data) => dataResponse(res, data, 'Profile Pic has been successfully updated', 'No changes in the record'))
+                        .catch((err) => errResponse(res, err));
+                })
+                .catch((err) => errResponse(res, err));
+        })
+        .catch((err) => errResponse(res, err));
 }

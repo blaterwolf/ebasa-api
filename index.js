@@ -5,10 +5,11 @@
 */
 
 // % Import Important Modules
-const express = require('express');
-const dotenv = require('dotenv');
+const express   = require('express');
+const dotenv    = require('dotenv');
 const {successMessage, failedMessage, syncSuccessMessage, syncFailedMessage } = require('./db_message');
-const jwt    = require('jsonwebtoken');
+const jwt       = require('jsonwebtoken');
+const path      = require('path');
 
 // % Reference Models
 const db = require('./src/models');
@@ -75,6 +76,11 @@ const authenticateToken = (req, res, next) => {
 // % Main API Route for EBASA API
 const MAIN_API_ROUTE = '/ebasa/v1/';
 
+// % Route for Image Uploads
+app.use('/public', express.static(path.join(__dirname, '/public/barangayCard')));
+app.use('/public', express.static(path.join(__dirname, '/public/profilePic')));
+app.use('/public', express.static(path.join(__dirname, '/public/bookImage')));
+
 // % Home Route
 // >> localhost:3600/ebasa/v1/
 app.use(`${ MAIN_API_ROUTE }`, require('./src/routes/home.route'));
@@ -83,9 +89,8 @@ app.use(`${ MAIN_API_ROUTE }`, require('./src/routes/home.route'));
 app.use(`${ MAIN_API_ROUTE }test`, require('./src/routes/test.route'));
 
 // % With Authentication
-// app.use(`${ MAIN_API_ROUTE }resident`, authenticateToken, require('./src/routes/resident.route'));
-// app.use(`${ MAIN_API_ROUTE }librarian`, authenticateToken, require('./src/routes/librarian.route'));
-// >> localhost:3600/ebasa/v1/admin
+app.use(`${ MAIN_API_ROUTE }resident`, authenticateToken, require('./src/routes/resident.route'));
+app.use(`${ MAIN_API_ROUTE }librarian`, authenticateToken, require('./src/routes/librarian.route'));
 app.use(`${ MAIN_API_ROUTE }admin`, authenticateToken, require('./src/routes/admin.route'));
 
 
