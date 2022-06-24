@@ -15,3 +15,6 @@
   - Borrow Transaction (Resident Side Only)
   - Return Transaction (Librarian Side Only)
   - Search Book Function for Authorize/Unauthorize users.
+
+# 0.2.1
+- Fixed `node_modules` and `readme.md`
