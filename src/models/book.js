@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
 
         // % 1:1 (hasOne) [books].[shelf_id] -> [shelves].[shelf_id]
         // % One book has one shelf aassigned.
-        this.hasOne(models.Shelf, {
+        this.belongsTo(models.Shelf, {
             foreignKey: 'shelf_id',
             as: 'shelf_assigned_to_book',
             onDelete: 'RESTRICT',
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
 
         // % 1:1 (hasOne) [books].[genre_id] -> [genres].[genre_id]
         // % One book has one genre assigned.
-        this.hasOne(models.Genre, {
+        this.belongsTo(models.Genre, {
             foreignKey: 'genre_id',
             as: 'genre_assigned_to_book',
             onDelete: 'RESTRICT',
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
 
         // % 1:1 (hasOne) [books].[publisher_id] -> [publishers].[publisher_id]
         // % One book has one publisher assigned.
-        this.hasOne(models.Publisher, {
+        this.belongsTo(models.Publisher, {
             foreignKey: 'publisher_id',
             as: 'publisher_assigned_to_book',
             onDelete: 'RESTRICT',
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         
         // % 1:1 (hasOne) [books].[language_id] -> [languages].[language_id]
         // % One book has one language assigned.
-        this.hasOne(models.Language, {
+        this.belongsTo(models.Language, {
             foreignKey: 'language_id',
             as: 'language_assigned_to_book',
             onDelete: 'RESTRICT',
@@ -46,11 +46,9 @@ module.exports = (sequelize, DataTypes) => {
 
         // % M:M (belongsToMany) [books]:[authors] through [bookauthors]
         // % Many books can have many authors.
-        this.belongsToMany(models.Author, {
-            through: 'bookauthors',
-            as: 'authors_assigned_to_book',
+        this.hasMany(models.BookAuthor, {
             foreignKey: 'book_id',
-            otherKey: 'author_id',
+            as: 'authors_assigned_to_book',
             onDelete: 'RESTRICT',
         });
 
@@ -61,6 +59,24 @@ module.exports = (sequelize, DataTypes) => {
         this.hasOne(models.Transaction, {
             foreignKey: 'transaction_id',
             as: 'transaction_assigned_to_book',
+            onDelete: 'RESTRICT',
+        });
+
+        // >> User Table
+
+        // % M:1 (belongsTo) [books].[created_by] -> [users].[user_id]
+        // % Many books can be added by a single admin/librarian
+        this.belongsTo(models.User, {
+            foreignKey: 'created_by',
+            as: 'book_created_by_admin',
+            onDelete: 'RESTRICT',
+        });
+
+        // % M:1 (belongsTo) [books].[updated_by] -> [users].[user_id]
+        // % Many books can be updated by a single admin/librarian
+        this.belongsTo(models.User, {
+            foreignKey: 'updated_by',
+            as: 'book_updated_by_admin',
             onDelete: 'RESTRICT',
         });
         }
@@ -178,7 +194,11 @@ module.exports = (sequelize, DataTypes) => {
             book_image: {
                 type: DataTypes.STRING,
                 allowNull: true,
-                comment: 'This contains the book_image of the user.'
+                comment: 'This contains the book_image of the user.',
+                get() {
+                    const rawValue = this.getDataValue('book_image');
+                    return rawValue ? "http://localhost:3600/public/" + rawValue : null;
+                }
             },
 
             // >> WITH FOREIGN KEYS
@@ -230,7 +250,7 @@ module.exports = (sequelize, DataTypes) => {
 
             updated_by:{
                 type: DataTypes.UUID,
-                allowNull: false,
+                allowNull: true,
                 validate: {
                     isUUID: { args: 4, msg: '[books].[updated_by] must be a valid UUID!' }
                 },
@@ -247,6 +267,7 @@ module.exports = (sequelize, DataTypes) => {
                         msg: '[books].[status] must be either `Active` or `Inactive`!'
                     },
                 },
+                defaultValue: 'Active',
                 comment: 'Book status. Example values are: Active, Inactive...'
             }
         }, 

@@ -7,11 +7,21 @@ var router = require('express').Router();
  */
 
 // >> MIDDLEWARE
-const { profilePicUpload } = require('../helper/imageMiddleware');
+const { profilePicUpload, bookImageUpload } = require('../helper/imageMiddleware');
 
 // % =====================================================================
 // % Library Management Routes
 // % =====================================================================
+
+// % Book
+var bookController = require('../controllers/librarian/book.controller');
+router.get('/book', bookController.getAllBooks);
+router.get('/book/:book_id', bookController.getOneBook);
+router.post('/book', bookImageUpload, bookController.createBook);
+router.put('/book/update-book-details/:book_id', bookController.updateBookDetails);
+router.put('/book/update-book-image/:book_id', bookImageUpload, bookController.updateBookImage);
+router.put('/book/status/:book_id', bookController.updateBookStatus);
+
 // % Author
 var authorController = require('../controllers/librarian/author.controller');
 router.post('/author', authorController.createAuthor);
@@ -46,6 +56,11 @@ router.post('/shelf', shelfController.createShelf);
 router.get('/shelf', shelfController.getAllShelf);
 router.get('/shelf/:shelf_id', shelfController.getOneShelf);
 router.put('/shelf/:shelf_id', shelfController.updateShelf);
+
+// % =====================================================================
+// % Transaction Management Routes
+// % =====================================================================
+var transactionController = require('../controllers/librarian/transaction.controller');
 
 // % =====================================================================
 // % Visiting Log Controller

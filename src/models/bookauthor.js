@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     {
         book_id: {
             type: DataTypes.UUID,
+            primaryKey: true,
             allowNull: false,
             validate: {
                 isUUID: { args: 4, msg: '[book_authors].[book_id] value must be a UUIDV4 type' },
@@ -41,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
 
         author_id: {
             type: DataTypes.UUID,
+            primaryKey: true,
             allowNull: false,
             validate: {
                 isUUID: { args: 4, msg: '[book_authors].[author_id] value must be a UUIDV4 type' },
@@ -51,7 +53,9 @@ module.exports = (sequelize, DataTypes) => {
     {
         sequelize,
         modelName: 'BookAuthor',
-        timestamps: false,
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
     }
     );
     return BookAuthor;

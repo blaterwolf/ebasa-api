@@ -46,7 +46,7 @@ const barangayCardUpload = (req, res, next) => {
     let upload = multer({
         storage: barangayCardStorage,
         fileFilter: fileFilterHelper.imageFilter,
-    }).single("profile_pic");
+    }).single("barangay_card");
 
     upload(req, res, function (err) {
       // req.file contains information of uploaded file
@@ -86,7 +86,7 @@ const bookImageUpload = (req, res, next) => {
     let upload = multer({
         storage: bookImageStorage,
         fileFilter: fileFilterHelper.imageFilter,
-    }).single("profile_pic");
+    }).single("book_image");
 
     upload(req, res, function (err) {
       // req.file contains information of uploaded file

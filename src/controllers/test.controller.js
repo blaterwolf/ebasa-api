@@ -18,32 +18,37 @@ async function fetchText() {
 exports.test = async (req, res, next) => {
     
     res.send(`
-    =========================================================== <br/>
-    TEST BOOP IN POSTMAN. <br/>
-    =========================================================== <br/>
-    This is a successful boop! Here's a T. Swift lyric for you: <br/>
-    <br/>
-    ${await fetchText()} <br/>
-    =========================================================== <br/>
+    ===========================================================
+    TEST BOOP IN POSTMAN.
+    ===========================================================
+    This is a successful boop! Here's a T. Swift lyric for you:
+
+    ${await fetchText()} 
+    ===========================================================
     `);
 }
 
 exports.populate_admin = (req, res, next) => {
+
+    req.body = {
+        user_id: 'df46833f-337e-45b9-9a69-2623aa42b189',
+        first_name: 'Albert Angelo',
+        last_name: 'Lupo',
+        password: 'Admin_111',
+        user_type: 'Admin',
+        email_address: 'blaterwolf@gmail.com',
+        contact_number: '09235156125',
+        verified: true,
+        created_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
+        verified_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
+        status: 'Active',
+        profile_pic: 'profile_pic-1655191954418.jpg'
+    }
+
+    req.body.full_name = '';
+
     db.User
-        .create({
-            user_id: 'df46833f-337e-45b9-9a69-2623aa42b189',
-            first_name: 'Albert Angelo',
-            last_name: 'Lupo',
-            full_name: 'Albert Angelo Lupo',
-            password: 'Admin_111',
-            user_type: 'Admin',
-            email_address: 'blaterwolf@gmail.com',
-            contact_number: '09235156125',
-            verified: true,
-            created_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
-            verified_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
-            status: 'Active'
-        })
+        .create(req.body)
         .then((data) => {
             let s_data = {
                 error: false,
@@ -56,7 +61,7 @@ exports.populate_admin = (req, res, next) => {
             ------------------------------------------------------------------------
             Your request has been sent to the database, here's a song lyric for you:
             
-            "Don't blame me, love made me crazy." - Don't Blame Me, Taylor Swift
+            "How am I gonna be an optimist about this?" - Pompeii, Bastille
             
             Info:
             ${JSON.stringify(s_data)}
@@ -75,7 +80,7 @@ exports.populate_admin = (req, res, next) => {
             ------------------------------------------------------------------------
             Your request failed, here's a song lyric for you though:
             
-            "Call me in the morning, I'll be on the way" - Montero, Lil Nas X
+            "What if our love never went away?" - What About Now, Daughtry
             
             Info:
             ${JSON.stringify(f_data, null, 4)}
@@ -97,8 +102,11 @@ exports.populate_librarians = (req, res, next) => {
         verified: true,
         created_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
         verified_by: 'df46833f-337e-45b9-9a69-2623aa42b189',
-        status: 'Active'
+        status: 'Active',
+        profile_pic: 'profile_pic-1655196384961.jpg'
     }
+
+    req.body.full_name = '';
 
     db.User
         .create(req.body)

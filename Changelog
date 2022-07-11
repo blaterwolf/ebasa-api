@@ -16,5 +16,12 @@
   - Return Transaction (Librarian Side Only)
   - Search Book Function for Authorize/Unauthorize users.
 
-# 0.2.1
+## 0.2.1
 - Fixed `node_modules` and `readme.md`
+
+## 0.3.0
+- Book table `status` column set default values to `Active`
+- Added `cors` so that you don't have to use the extension.
+- nag-format yung `index.js` and other files, maybe Prettier fixed it?
+- Added book and transaction controllers pero wala pang code (yung transaction).
+- ignored `vscode` folder kasi lumalabas kapag sinasave ko.

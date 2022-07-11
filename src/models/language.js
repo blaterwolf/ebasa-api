@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
 
         // % 1:1 (belongsTo) [languages].[language_id] -> [books].[language_id]
         // % One language is assigned to one book.
-        this.belongsTo(models.Book, {
+        this.hasOne(models.Book, {
             foreignKey: 'language_id',
             as: 'book_language',
             onDelete: 'RESTRICT',

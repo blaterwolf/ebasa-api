@@ -1,18 +1,24 @@
 /**
-* ================================================================
-* * EBASA API - INDEX.JS CONFIGURATIONS
-* ================================================================
-*/
+ * ================================================================
+ * * EBASA API - INDEX.JS CONFIGURATIONS
+ * ================================================================
+ */
 
 // % Import Important Modules
-const express   = require('express');
-const dotenv    = require('dotenv');
-const {successMessage, failedMessage, syncSuccessMessage, syncFailedMessage } = require('./db_message');
-const jwt       = require('jsonwebtoken');
-const path      = require('path');
+const express = require("express");
+const dotenv = require("dotenv");
+const {
+  successMessage,
+  failedMessage,
+  syncSuccessMessage,
+  syncFailedMessage,
+} = require("./db_message");
+const jwt = require("jsonwebtoken");
+const path = require("path");
+const cors = require("cors");
 
 // % Reference Models
-const db = require('./src/models');
+const db = require("./src/models");
 
 // % Initialize Express
 var app = express();
@@ -30,17 +36,18 @@ dotenv.config();
 const PORT = process.env.PORT || 3600;
 
 // % Middleware
+app.use(cors());
 app.use(function (req, res, next) {
-    // ? you can check session here.
-    console.log(`Request has been sent to ${req.url}`);
-    next();
+  // ? you can check session here.
+  console.log(`Request has been sent to ${req.url}`);
+  next();
 });
 
 /**
-* ================================================================
-* * AUTHENTICATION-RELATED
-* ================================================================
-*/
+ * ================================================================
+ * * AUTHENTICATION-RELATED
+ * ================================================================
+ */
 
 // >> Generate Secret Token (one time thing lang bestie, pang-generate lang)
 // secret_token = require('crypto').randomBytes(64).toString("hex");
@@ -49,67 +56,100 @@ app.use(function (req, res, next) {
 
 // Authenticate token
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers.authorization
-    const token = authHeader && authHeader.split(' ')[1];
-    // If token is null -> unauthorized response
-    if (token == null) return res.status(401).send('No access token is detected.');
-    // Verify the token, if not verified then forbidden
-    jwt.verify(token, process.env.SECRET_TOKEN, (err, user) => {
-        // If token is not verified -> send forbidden response
-        if (err) {
-            if(process.env.ENABLE_ACCESS_TOKEN_LOG === 'true') console.log(`${err}\n`);
-            return res.sendStatus(403);
-        }
-        // Save token data to req.user
-        req.user = user;
-        if(process.env.ENABLE_ACCESS_TOKEN_LOG === 'true') console.log('Access Granted\n')
-        next();
-    });
-}
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+  // If token is null -> unauthorized response
+  if (token == null)
+    return res.status(401).send("No access token is detected.");
+  // Verify the token, if not verified then forbidden
+  jwt.verify(token, process.env.SECRET_TOKEN, (err, user) => {
+    // If token is not verified -> send forbidden response
+    if (err) {
+      if (process.env.ENABLE_ACCESS_TOKEN_LOG === "true")
+        console.log(`${err}\n`);
+      return res.sendStatus(403);
+    }
+    // Save token data to req.user
+    req.user = user;
+    if (process.env.ENABLE_ACCESS_TOKEN_LOG === "true")
+      console.log("Access Granted\n");
+    next();
+  });
+};
 
 /**
-* ================================================================
-* * ROUTES
-* ================================================================
-*/
+ * ================================================================
+ * * ROUTES
+ * ================================================================
+ */
 
 // % Main API Route for EBASA API
-const MAIN_API_ROUTE = '/ebasa/v1/';
+const MAIN_API_ROUTE = "/ebasa/v1/";
 
 // % Route for Image Uploads
-app.use('/public', express.static(path.join(__dirname, '/public/barangayCard')));
-app.use('/public', express.static(path.join(__dirname, '/public/profilePic')));
-app.use('/public', express.static(path.join(__dirname, '/public/bookImage')));
+app.use(
+  "/public",
+  express.static(path.join(__dirname, "/public/barangayCard"))
+);
+app.use("/public", express.static(path.join(__dirname, "/public/profilePic")));
+app.use("/public", express.static(path.join(__dirname, "/public/bookImage")));
 
 // % Home Route
 // >> localhost:3600/ebasa/v1/
-app.use(`${ MAIN_API_ROUTE }`, require('./src/routes/home.route'));
+app.use(`${MAIN_API_ROUTE}`, require("./src/routes/home.route"));
 
 // % Test Route
-app.use(`${ MAIN_API_ROUTE }test`, require('./src/routes/test.route'));
+app.use(`${MAIN_API_ROUTE}test`, require("./src/routes/test.route"));
 
 // % With Authentication
-app.use(`${ MAIN_API_ROUTE }resident`, authenticateToken, require('./src/routes/resident.route'));
-app.use(`${ MAIN_API_ROUTE }librarian`, authenticateToken, require('./src/routes/librarian.route'));
-app.use(`${ MAIN_API_ROUTE }admin`, authenticateToken, require('./src/routes/admin.route'));
-
+app.use(
+  `${MAIN_API_ROUTE}resident`,
+  authenticateToken,
+  require("./src/routes/resident.route")
+);
+app.use(
+  `${MAIN_API_ROUTE}librarian`,
+  authenticateToken,
+  require("./src/routes/librarian.route")
+);
+app.use(
+  `${MAIN_API_ROUTE}admin`,
+  authenticateToken,
+  require("./src/routes/admin.route")
+);
 
 /**
-* ================================================================
-* * DATABASE
-* ================================================================
-*/
+ * ================================================================
+ * * DATABASE
+ * ================================================================
+ */
 
 db.sequelize
-    .authenticate()
-    .then(() => {
-        // * Log the success db connection message
-        process.env.ENABLE_DB_LOG === "true" ? console.log(successMessage()) : {/* do nothing */};
-    
-        // * Sync models to the database 
-        db.sequelize
-            .sync({ alter: process.env.SEQUELIZE_ALTER_SYNC === 'true' || false })
-            .then(() => app.listen(PORT, () => console.log(`${syncSuccessMessage(PORT, MAIN_API_ROUTE, process.env.SEQUELIZE_ALTER_SYNC)}`)))
-            .catch((err) => console.log(syncFailedMessage(err)));
-        })
-    .catch(err => { console.error(failedMessage(err)); });
+  .authenticate()
+  .then(() => {
+    // * Log the success db connection message
+    process.env.ENABLE_DB_LOG === "true"
+      ? console.log(successMessage())
+      : {
+          /* do nothing */
+        };
+
+    // * Sync models to the database
+    db.sequelize
+      .sync({ alter: process.env.SEQUELIZE_ALTER_SYNC === "true" || false })
+      .then(() =>
+        app.listen(PORT, () =>
+          console.log(
+            `${syncSuccessMessage(
+              PORT,
+              MAIN_API_ROUTE,
+              process.env.SEQUELIZE_ALTER_SYNC
+            )}`
+          )
+        )
+      )
+      .catch((err) => console.log(syncFailedMessage(err)));
+  })
+  .catch((err) => {
+    console.error(failedMessage(err));
+  });

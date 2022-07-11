@@ -28,11 +28,9 @@ module.exports = (sequelize, DataTypes) => {
 
         // % M:M (belongsToMany) [authors]:[books] through [bookauthors]
         // % Many authors can be assigned to many books.
-        this.belongsToMany(models.Book, {
-            through: 'bookauthors',
-            as: 'books',
+        this.hasMany(models.BookAuthor, {
             foreignKey: 'author_id',
-            otherKey: 'book_id',
+            as: 'authors_assigned_to_book',
             onDelete: 'RESTRICT',
         });
         }

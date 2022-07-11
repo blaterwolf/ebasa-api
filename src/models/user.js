@@ -327,7 +327,11 @@ module.exports = (sequelize, DataTypes) => {
             barangay_card: {
                 type: DataTypes.STRING,
                 allowNull: true,
-                comment: 'This contains the barangay card of the user.'
+                comment: 'This contains the barangay card of the user.',
+                get() {
+                    const rawValue = this.getDataValue('barangay_card');
+                    return rawValue ? "http://localhost:3600/public/" + rawValue : null;
+                }
             },
 
             created_by: {

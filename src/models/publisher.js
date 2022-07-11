@@ -28,14 +28,11 @@ module.exports = (sequelize, DataTypes) => {
 
         // % 1:1 (belongsTo) [publishers].[publisher_id] -> [books].[publisher_id]
         // % One publisher is assigned to one book.
-        this.belongsTo(models.Book, {
+        this.hasOne(models.Book, {
             foreignKey: 'publisher_id',
             as: 'book_publisher',
             onDelete: 'RESTRICT',
         });
-
-        
-
         }
     }
     Publisher.init(
