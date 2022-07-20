@@ -25,3 +25,8 @@
 - nag-format yung `index.js` and other files, maybe Prettier fixed it?
 - Added book and transaction controllers pero wala pang code (yung transaction).
 - ignored `vscode` folder kasi lumalabas kapag sinasave ko.
+
+## 0.4.0 
+- minor changes to the code with regards to `admin`, `librarian`, and `resident` routes 
+- modified `verified` column in user from boolean to string
+- Prettier worked finally so formatting got affected on these small changes...
